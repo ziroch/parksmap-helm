@@ -47,7 +47,7 @@ mongodb:
   persistence:
     enabled: true
     size: 10Gi
-    enabled: false  # emptyDir para dev
+    storageClass: "ocs-storagecluster-ceph-rbd"
 
 
 autoscaling:
