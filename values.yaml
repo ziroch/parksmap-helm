@@ -136,7 +136,7 @@ mongodb:
 
   image:
     repository: quay.io/centos7/mongodb-36-centos7
-    tag: latest
+    tag: master
     pullPolicy: IfNotPresent
 
   service:

@@ -36,7 +36,7 @@ mongodb:
   replicaCount: 1
   image:
     repository: quay.io/centos7/mongodb-36-centos7
-    tag: "latest"
+    tag: "master"
   resources:
     limits:
       cpu: 1
