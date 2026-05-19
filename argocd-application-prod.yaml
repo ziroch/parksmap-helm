@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: parksmap-helm-prod
+  name: parksmap-helm-demo-admin
   namespace: openshift-gitops
   labels:
     lab: helm
@@ -20,7 +20,7 @@ spec:
         - values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: parksmap-prod-admin
+    namespace: parksmap-demo-admin
   syncPolicy:
     automated:
       prune: true

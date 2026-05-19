@@ -47,7 +47,6 @@ mongodb:
   persistence:
     enabled: true
     size: 10Gi
-    storageClass: "gp3"  # Ajustar según cluster
 
 autoscaling:
   enabled: true
