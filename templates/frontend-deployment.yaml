@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/component: parksmap
     app.kubernetes.io/role: frontend
 spec:
-  replicas: 2
+  replicas: {{ .Values.frontend.replicaCount }}
   selector:
     matchLabels:
       {{- include "parksmap.selectorLabels" . | nindent 6 }}
