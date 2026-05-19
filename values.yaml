@@ -122,7 +122,7 @@ backend:
       failureThreshold: 3
 
   env:
-    databaseServiceName: mongodb-nationalparks
+    databaseServiceName: parksmap-helm-demo-admin-mongodb
     mongodbDatabase: mongodb
     mongodbUser: mongodb
     mongodbPassword: mongodb
