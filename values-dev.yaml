@@ -1,0 +1,51 @@
+# ============================================
+# Values para Desarrollo (DEV)
+# ============================================
+# Despliegue ligero: 1 réplica, recursos mínimos, tag latest
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: quay.io/openshiftroadshow/parksmap
+    tag: latest
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  config:
+    appName: "National Parks Explorer - DEV"
+    logLevel: "debug"
+
+backend:
+  replicaCount: 1
+  image:
+    repository: quay.io/openshiftroadshow/nationalparks-py
+    tag: latest
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+mongodb:
+  replicaCount: 1
+  image:
+    repository: quay.io/centos7/mongodb-36-centos7
+    tag: latest
+  resources:
+    limits:
+      cpu: 300m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  persistence:
+    enabled: false  # emptyDir para dev
+
+autoscaling:
+  enabled: false

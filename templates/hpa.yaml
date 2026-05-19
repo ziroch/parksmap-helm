@@ -1,0 +1,59 @@
+{{- if .Values.autoscaling.enabled }}
+{{- if .Values.frontend.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "parksmap.fullname" . }}-frontend-hpa
+  labels:
+    {{- include "parksmap.labels" . | nindent 4 }}
+    app.kubernetes.io/component: parksmap
+    app.kubernetes.io/role: frontend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "parksmap.fullname" . }}-frontend
+  minReplicas: {{ .Values.autoscaling.frontend.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.frontend.maxReplicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.autoscaling.frontend.targetCPUUtilizationPercentage }}
+  {{- if .Values.autoscaling.frontend.targetMemoryUtilizationPercentage }}
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.autoscaling.frontend.targetMemoryUtilizationPercentage }}
+  {{- end }}
+{{- end }}
+---
+{{- if .Values.backend.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "parksmap.fullname" . }}-backend-hpa
+  labels:
+    {{- include "parksmap.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nationalparks
+    app.kubernetes.io/role: backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "parksmap.fullname" . }}-backend
+  minReplicas: {{ .Values.autoscaling.backend.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.backend.maxReplicas }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.autoscaling.backend.targetCPUUtilizationPercentage }}
+{{- end }}
+{{- end }}

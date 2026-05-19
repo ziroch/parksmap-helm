@@ -1,0 +1,77 @@
+{{- if .Values.backend.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "parksmap.fullname" . }}-backend
+  labels:
+    {{- include "parksmap.labels" . | nindent 4 }}
+    app.kubernetes.io/component: nationalparks
+    app.kubernetes.io/role: backend
+    type: parksmap-backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "parksmap.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: nationalparks
+      type: parksmap-backend
+  template:
+    metadata:
+      labels:
+        {{- include "parksmap.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: nationalparks
+        app.kubernetes.io/role: backend
+        type: parksmap-backend
+    spec:
+      containers:
+      - name: nationalparks
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.backend.service.targetPort }}
+          name: http
+          protocol: TCP
+        env:
+        - name: DATABASE_SERVICE_NAME
+          valueFrom:
+            secretKeyRef:
+              key: DATABASE_SERVICE_NAME
+              name: {{ .Values.secrets.name }}
+        - name: MONGODB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_DATABASE
+              name: {{ .Values.secrets.name }}
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_USER
+              name: {{ .Values.secrets.name }}
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_PASSWORD
+              name: {{ .Values.secrets.name }}
+        resources:
+          {{- toYaml .Values.backend.resources | nindent 10 }}
+        {{- if .Values.backend.probes.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.backend.probes.liveness.path }}
+            port: {{ .Values.backend.probes.liveness.port }}
+          initialDelaySeconds: {{ .Values.backend.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.backend.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.backend.probes.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.backend.probes.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.backend.probes.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.backend.probes.readiness.path }}
+            port: {{ .Values.backend.probes.readiness.port }}
+          initialDelaySeconds: {{ .Values.backend.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.backend.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.backend.probes.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.backend.probes.readiness.failureThreshold }}
+        {{- end }}
+{{- end }}

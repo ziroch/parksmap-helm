@@ -1,0 +1,62 @@
+# ============================================
+# Values para Producción (PROD)
+# ============================================
+# 3 réplicas, recursos grandes, HPA habilitado, persistencia real
+
+frontend:
+  replicaCount: 3
+  image:
+    repository: quay.io/openshiftroadshow/parksmap
+    tag: "v1.2.0"
+  resources:
+    limits:
+      cpu: 800m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  config:
+    appName: "National Parks Explorer"
+    logLevel: "warn"
+
+backend:
+  replicaCount: 3
+  image:
+    repository: quay.io/openshiftroadshow/nationalparks-py
+    tag: "v1.1.0"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 300m
+      memory: 512Mi
+
+mongodb:
+  replicaCount: 1
+  image:
+    repository: quay.io/centos7/mongodb-36-centos7
+    tag: "v3.6"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 300m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "gp3"  # Ajustar según cluster
+
+autoscaling:
+  enabled: true
+  frontend:
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  backend:
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70

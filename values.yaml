@@ -1,0 +1,217 @@
+# ============================================
+# Valores Globales
+# ============================================
+global:
+  appName: national-parks-app
+  labels:
+    app.kubernetes.io/part-of: national-parks-app
+    managed-by: argocd
+
+# ============================================
+# Frontend: Parksmap
+# ============================================
+frontend:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: quay.io/openshiftroadshow/parksmap
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+
+  route:
+    enabled: true
+    tls:
+      enabled: true
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    host: ""  # vacío = OpenShift genera hostname automático
+
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+  probes:
+    liveness:
+      enabled: true
+      path: /
+      port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /
+      port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+  config:
+    appName: "National Parks Explorer"
+    logLevel: "info"
+    backendDiscovery: "openshift"
+
+  serviceAccount:
+    create: true
+    name: parksmap-sa
+    annotations: {}
+
+# ============================================
+# Backend: Nationalparks
+# ============================================
+backend:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: quay.io/openshiftroadshow/nationalparks-py
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+    labels:
+      type: parksmap-backend  # CRÍTICO: permite que frontend descubra el backend
+
+  route:
+    enabled: true
+    tls:
+      enabled: true
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
+    host: ""
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  probes:
+    liveness:
+      enabled: true
+      path: /ws/healthz
+      port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+    readiness:
+      enabled: true
+      path: /ws/healthz
+      port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+  env:
+    databaseServiceName: mongodb-nationalparks
+    mongodbDatabase: mongodb
+    mongodbUser: mongodb
+    mongodbPassword: mongodb
+
+# ============================================
+# Database: MongoDB
+# ============================================
+mongodb:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: quay.io/centos7/mongodb-36-centos7
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    type: ClusterIP
+    port: 27017
+    targetPort: 27017
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  persistence:
+    enabled: false  # true = usar PVC, false = emptyDir (demo)
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+  env:
+    mongodbUser: mongodb
+    mongodbPassword: mongodb
+    mongodbDatabase: mongodb
+    mongodbAdminPassword: mongodb
+
+# ============================================
+# RBAC
+# ============================================
+rbac:
+  enabled: true
+  roleBinding:
+    name: view
+    roleRef:
+      kind: ClusterRole
+      name: view
+    subjects:
+      - kind: ServiceAccount
+        name: default
+
+# ============================================
+# Secrets
+# ============================================
+secrets:
+  enabled: true
+  name: nationalparks-mongodb-parameters
+  data:
+    DATABASE_SERVICE_NAME: mongodb-nationalparks
+    MONGODB_DATABASE: mongodb
+    MONGODB_USER: mongodb
+    MONGODB_PASSWORD: mongodb
+    MONGODB_ADMIN_PASSWORD: mongodb
+
+# ============================================
+# Autoscaling (HPA) - Solo producción
+# ============================================
+autoscaling:
+  enabled: false
+  frontend:
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+  backend:
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+# ============================================
+# NetworkPolicy (opcional, para Lab E)
+# ============================================
+networkPolicy:
+  enabled: false
+  ingress:
+    enabled: true
+  egress:
+    enabled: false

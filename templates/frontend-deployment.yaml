@@ -1,0 +1,63 @@
+{{- if .Values.frontend.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "parksmap.fullname" . }}-frontend
+  labels:
+    {{- include "parksmap.labels" . | nindent 4 }}
+    app.kubernetes.io/component: parksmap
+    app.kubernetes.io/role: frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "parksmap.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: parksmap
+  template:
+    metadata:
+      labels:
+        {{- include "parksmap.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: parksmap
+        app.kubernetes.io/role: frontend
+    spec:
+      {{- if .Values.frontend.serviceAccount.create }}
+      serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
+      {{- end }}
+      containers:
+      - name: parksmap
+        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.frontend.service.targetPort }}
+          name: http
+          protocol: TCP
+        env:
+        - name: APP_NAME
+          value: {{ .Values.frontend.config.appName | quote }}
+        - name: LOG_LEVEL
+          value: {{ .Values.frontend.config.logLevel | quote }}
+        - name: BACKEND_DISCOVERY
+          value: {{ .Values.frontend.config.backendDiscovery | quote }}
+        resources:
+          {{- toYaml .Values.frontend.resources | nindent 10 }}
+        {{- if .Values.frontend.probes.liveness.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.frontend.probes.liveness.path }}
+            port: {{ .Values.frontend.probes.liveness.port }}
+          initialDelaySeconds: {{ .Values.frontend.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.frontend.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.frontend.probes.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.frontend.probes.liveness.failureThreshold }}
+        {{- end }}
+        {{- if .Values.frontend.probes.readiness.enabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.frontend.probes.readiness.path }}
+            port: {{ .Values.frontend.probes.readiness.port }}
+          initialDelaySeconds: {{ .Values.frontend.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.frontend.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.frontend.probes.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.frontend.probes.readiness.failureThreshold }}
+        {{- end }}
+{{- end }}
