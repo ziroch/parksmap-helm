@@ -7,7 +7,7 @@ frontend:
   replicaCount: 3
   image:
     repository: quay.io/openshiftroadshow/parksmap
-    tag: "v1.3.0"
+    tag: "latest"
   resources:
     limits:
       cpu: 800m
@@ -23,7 +23,7 @@ backend:
   replicaCount: 3
   image:
     repository: quay.io/openshiftroadshow/nationalparks-py
-    tag: "v1.1.0"
+    tag: "latest"
   resources:
     limits:
       cpu: 1
@@ -36,7 +36,7 @@ mongodb:
   replicaCount: 1
   image:
     repository: quay.io/centos7/mongodb-36-centos7
-    tag: "v1"
+    tag: "latest"
   resources:
     limits:
       cpu: 1
