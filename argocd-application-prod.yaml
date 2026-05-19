@@ -20,7 +20,7 @@ spec:
         - values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: parksmap-demo-admin
+    namespace: parksmap-helm-demo-admin
   syncPolicy:
     automated:
       prune: true
