@@ -88,7 +88,7 @@ ARGOCD_PASS=$(oc get secret openshift-gitops-cluster -n openshift-gitops -o json
 argocd login ${ARGOCD_URL} --username admin --password ${ARGOCD_PASS} --insecure
 
 # Clonar repo
-git clone https://github.com/workshop-gitops/cap12-labs.git
+git clone https://github.com/ziroch/parksmap-helm.git
 cd cap12-labs
 ```
 

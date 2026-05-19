@@ -10,9 +10,9 @@ keywords:
   - openshift
   - demo
   - gitops
-home: https://github.com/workshop-gitops/cap12-labs
+home: https://github.com/ziroch/parksmap-helm
 sources:
-  - https://github.com/workshop-gitops/cap12-labs
+  - https://github.com/ziroch/parksmap-helm
 maintainers:
   - name: Workshop Team
     email: workshop@example.com
