@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "parksmap.fullname" . }}-backend
+  name: parksmap-helm-demo-admin-backend
   labels:
     {{- include "parksmap.labels" . | nindent 4 }}
     app.kubernetes.io/component: nationalparks
