@@ -4,25 +4,23 @@ metadata:
   name: parksmap-helm-prod
   namespace: openshift-gitops
   labels:
-    workshop: cap12
     lab: helm
     app: parksmap
     environment: prod
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/ziroch/parksmap-helm.git
     targetRevision: main
-    path: parksmap-helm
+    path: .
     helm:
       valueFiles:
         - values.yaml
         - values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: parksmap-prod
+    namespace: parksmap-prod-admin
   syncPolicy:
     automated:
       prune: true
