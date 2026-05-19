@@ -61,7 +61,7 @@ frontend:
   config:
     appName: "National Parks Explorer"
     logLevel: "info"
-    backendDiscovery: "openshift"
+    backendDiscovery: "parksmap-helm-demo-admin-backend"
 
   serviceAccount:
     create: true
