@@ -176,7 +176,7 @@ rbac:
       name: view
     subjects:
       - kind: ServiceAccount
-        name: default
+        name: parksmap-sa
 
 # ============================================
 # Secrets
