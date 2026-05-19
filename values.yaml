@@ -185,7 +185,7 @@ secrets:
   enabled: true
   name: nationalparks-mongodb-parameters
   data:
-    DATABASE_SERVICE_NAME: mongodb-nationalparks
+    DATABASE_SERVICE_NAME: parksmap-helm-demo-admin-mongodb
     MONGODB_DATABASE: mongodb
     MONGODB_USER: mongodb
     MONGODB_PASSWORD: mongodb
