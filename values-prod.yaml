@@ -47,6 +47,8 @@ mongodb:
   persistence:
     enabled: true
     size: 10Gi
+    enabled: false  # emptyDir para dev
+
 
 autoscaling:
   enabled: true
