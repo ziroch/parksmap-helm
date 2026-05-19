@@ -191,27 +191,3 @@ secrets:
     MONGODB_PASSWORD: mongodb
     MONGODB_ADMIN_PASSWORD: mongodb
 
-# ============================================
-# Autoscaling (HPA) - Solo producción
-# ============================================
-autoscaling:
-  enabled: false
-  frontend:
-    minReplicas: 1
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 70
-    targetMemoryUtilizationPercentage: 80
-  backend:
-    minReplicas: 1
-    maxReplicas: 10
-    targetCPUUtilizationPercentage: 70
-
-# ============================================
-# NetworkPolicy (opcional, para Lab E)
-# ============================================
-networkPolicy:
-  enabled: false
-  ingress:
-    enabled: true
-  egress:
-    enabled: false
