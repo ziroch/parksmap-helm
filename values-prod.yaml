@@ -4,7 +4,7 @@
 # 3 réplicas, recursos grandes, HPA habilitado, persistencia real
 
 frontend:
-  replicaCount: 3
+  replicaCount: 1
   image:
     repository: quay.io/openshiftroadshow/parksmap
     tag: "latest"
@@ -20,7 +20,7 @@ frontend:
     logLevel: "warn"
 
 backend:
-  replicaCount: 3
+  replicaCount: 1
   image:
     repository: quay.io/openshiftroadshow/nationalparks-py
     tag: "latest"
